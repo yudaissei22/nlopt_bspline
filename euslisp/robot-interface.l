@@ -14,13 +14,17 @@
   (send *lfoot-plate* :locate #f(0 100 45.8336) :world)
   (send (send *robot* :lleg :end-coords) :assoc *lfoot-plate*))
 
-(print "[Warn] setting lower torque limit")
-(send (send *robot* :larm :collar-y) :max-joint-torque 0) ;; defaults to about 220[Nm]
-(send (send *robot* :rarm :collar-y) :max-joint-torque 0) ;; defaults to about 220[Nm]
-(send (send *robot* :torso-waist-y) :max-joint-torque 100) ;; defaults to about 434[Nm]
-(format t "[Warn] set torque limit (send (send *robot* :larm :collar-y) :max-joint-torque) => ~A~%" (send (send *robot* :larm :collar-y) :max-joint-torque))
-(format t "[Warn] set torque limit (send (send *robot* :rarm :collar-y) :max-joint-torque) => ~A~%" (send (send *robot* :rarm :collar-y) :max-joint-torque))
-(format t "[Warn] set torque limit (send (send *robot* :torso-waist-y) :max-joint-torque) => ~A~%" (send (send *robot* :torso-waist-y) :max-joint-torque))
+
+;; torqueの上限値を消す
+;; (print "[Warn] setting lower torque limit")
+;; (send (send *robot* :larm :collar-y) :max-joint-torque 0) ;; defaults to about 220[Nm]
+;; (send (send *robot* :rarm :collar-y) :max-joint-torque 0) ;; defaults to about 220[Nm]
+;; (send (send *robot* :torso-waist-y) :max-joint-torque 100) ;; defaults to about 434[Nm]
+;; (format t "[Warn] set torque limit (send (send *robot* :larm :collar-y) :max-joint-torque) => ~A~%" (send (send *robot* :larm :collar-y) :max-joint-torque))
+;; (format t "[Warn] set torque limit (send (send *robot* :rarm :collar-y) :max-joint-torque) => ~A~%" (send (send *robot* :rarm :collar-y) :max-joint-torque))
+;; (format t "[Warn] set torque limit (send (send *robot* :torso-waist-y) :max-joint-torque) => ~A~%" (send (send *robot* :torso-waist-y) :max-joint-torque))
+;; ここまで
+
 ;; (when (not (boundp '*jaxon_red*))
 ;;   (require "package://hrpsys_ros_bridge_tutorials/euslisp/jaxon_red-interface.l")
 ;;   (setq *jaxon_red* (jaxon_red))
