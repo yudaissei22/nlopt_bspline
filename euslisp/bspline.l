@@ -547,6 +547,7 @@
           delta-matrix
           discrete-delta-matrix))
 
+;; ここのメソッドの中に、calc-deltaがある。
 (defmethod basic-spline
   (:init
    (&rest
