@@ -151,6 +151,14 @@
   (setq *use-hit-ee* use-hit-ee)
   (setq *use-6dof-p* use-6dof-p)
 
+  ;; yuda add for multiple objective function
+  (setq *jav* nil
+	*jvel* nil
+	*jacc* nil
+	*jtau* nil
+	)
+  
+
   (format t "*************** motion ***************~%*id-max*=~a, *recursive-order*=~a, *x-min*=~a, *x-hit*=~a, *x-max*=~a, *sp-front*=~a, *sp-back*=~a, *sp-inside*=~a, *sp-outside*=~a, *epsilon-c*=~a, *mu*=~a~%~%" *id-max* *recursive-order* *x-min* (eval *x-hit*) *x-max* *sp-front* *sp-back* *sp-inside* *sp-outside* *epsilon-c* *mu*)
 
 
@@ -635,7 +643,8 @@
                (setq jid (+ jid 1)))
 
            (subseq *bspline* (+ (length *jlist*) 3) (+ (length *jlist*) 6)))
-           )))
+	  )) ;jerkのletの締め
+      ) ;; jerkのwhenの締め
 
     ;; hitting-poseにおける速度の最大化
     (when (not (= *maxvel-weight* 0))
@@ -720,8 +729,34 @@
           (setq hitting-maxvel (* -1e3 (v. hitting-dr hitting-direction)))  ;; 面の正方向の速度を最大化するため面の反対方向の速度の最小化問題にする、スケール合わせのために1000倍する
           (setq hitting-maxvel (* 1e3 (v. hitting-dr hitting-direction)))  ;; バックハンドの場合は面の正方向の速度を最小化して、スケール合わせのために1000倍する
           )
-          ))
+	))
 
+    ;; energyの計算
+    ;; -> dtを計算して、*x-max* / dt回だけエネルギーの計算を行う。ある時刻での関節角度 -> トルク -> エネルギーを計算 * 240回
+    ;; -> 初期値の設定は、nlopt_initに書く
+    (setq *time* 0)
+    (setq dt 0.01)
+
+    (dotimes (i (/ *x-max* dt))
+      (let (jid 0)
+	     (mapc
+	      #'(lambda (jid bs)
+	     	  (push
+	     	   (send bs :calc-delta *time* (subseq v1 (* jid *id-max*) (* (+ jid 1) *id-max*)) :n 1)
+	     	   *jvel*)
+	     	  (push
+	     	   (send bs :calc-delta *time* (subseq v1 (* jid *id-max*) (* (+ jid 1) *id-max*)) :n 2)
+	     	   *jacc*)
+	     	  )
+	      *jlist* *bspline*) ;; mapc
+	     (setq time (* dt i))
+	     (setq jid (+ jid 1))
+	     (format t "time is ~a~%" *time*)
+    	     (format t "jvel is ~a~%" (car *jvel*))
+	     (format t "jacc is ~a~%" (car *jacc*))
+	     ) ;; let
+	     ) ;; dotimes 
+	     
 
 
     ;; 各値の重み付けによって評価関数を定める
