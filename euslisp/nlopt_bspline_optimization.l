@@ -517,6 +517,11 @@
       (send robot :move-to robot-coords :world)
       (send robot :angle-vector robot-angle-vector))))
 
+(defun resave ()
+  (dump-loadable-structure
+   ""
+  )
+
 
 
 
