@@ -734,35 +734,38 @@
     ;; energyの計算
     ;; -> dtを計算して、*x-max* / dt回だけエネルギーの計算を行う。ある時刻での関節角度 -> トルク -> エネルギーを計算 * 240回
     ;; -> 初期値の設定は、nlopt_initに書く
-    (setq *time* 0)
-    (setq dt 0.01)
+    ;; (setq *time* 0)
+    ;; (setq dt 0.01)
 
-    (dotimes (i (/ *x-max* dt))
-      (let (jid 0)
-	     (mapc
-	      #'(lambda (jid bs)
-	     	  (push
-	     	   (send bs :calc-delta *time* (subseq v1 (* jid *id-max*) (* (+ jid 1) *id-max*)) :n 1)
-	     	   *jvel*)
-	     	  (push
-	     	   (send bs :calc-delta *time* (subseq v1 (* jid *id-max*) (* (+ jid 1) *id-max*)) :n 2)
-	     	   *jacc*)
-	     	  )
-	      *jlist* *bspline*) ;; mapc
-	     (setq time (* dt i))
-	     (setq jid (+ jid 1))
-	     (format t "time is ~a~%" *time*)
-    	     (format t "jvel is ~a~%" (car *jvel*))
-	     (format t "jacc is ~a~%" (car *jacc*))
-	     ) ;; let
-	     ) ;; dotimes 
+    ;; (dotimes (i (/ *x-max* dt))
+    ;;   (let (jid 0)
+    ;; 	     (mapc
+    ;; 	      #'(lambda (jid bs)
+    ;; 	     	  (push
+    ;; 	     	   (send bs :calc-delta *time* (subseq v1 (* jid *id-max*) (* (+ jid 1) *id-max*)) :n 1)
+    ;; 	     	   *jvel*)
+    ;; 	     	  (push
+    ;; 	     	   (send bs :calc-delta *time* (subseq v1 (* jid *id-max*) (* (+ jid 1) *id-max*)) :n 2)
+    ;; 	     	   *jacc*)
+    ;; 	     	  )
+    ;; 	      *jlist* *bspline*) ;; mapc
+    ;; 	     (setq time (* dt i))
+    ;; 	     (setq jid (+ jid 1))
+    ;; 	     (format t "time is ~a~%" *time*)
+    ;; 	     (format t "jvel is ~a~%" (car *jvel*))
+    ;; 	     (format t "jacc is ~a~%" (car *jacc*))
+    ;; 	     ) ;; let
+    ;; 	     ) ;; dotimes 
 	     
 
 
     ;; 各値の重み付けによって評価関数を定める
+    ;; 評価関数の最小化を行っている。
     (setf (aref v2 0)
           (+ (* *minjerk-weight* integral-minjerk)
-             (* *maxvel-weight* hitting-maxvel))))
+             (* *maxvel-weight* hitting-maxvel))
+	  )
+    ) ;; letの締め
 
 
 
